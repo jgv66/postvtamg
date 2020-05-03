@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  url: 'https://api.kinetik.cl/postvta',  /* servidor real linode */
 };

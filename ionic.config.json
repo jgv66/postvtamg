@@ -1,5 +1,7 @@
 {
   "name": "postvtamg",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
