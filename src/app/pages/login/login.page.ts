@@ -51,28 +51,28 @@ export class LoginPage implements OnInit {
     // sectores
     if ( this.baseLocal.sectores.length === 0 ) {
       this.netWork.obtenTablas( 'sectores' )
-          .subscribe( data => { this.baseLocal.guardaSectores( data ); },
+          .subscribe( ( data: any ) => { this.baseLocal.guardaSectores( data.datos ); },
                       err  => { this.funciones.msgAlert( 'ATENCION' , 'Ocurrió un error al rescatar sectores -> ' + err ); }
           );
     }
     // zonas
     if ( this.baseLocal.zonas.length === 0 ) {
       this.netWork.obtenTablas( 'zonas' )
-          .subscribe( data => { this.baseLocal.guardaZonas( data ); },
+          .subscribe( ( data: any ) => { this.baseLocal.guardaZonas( data.datos ); },
                       err  => { this.funciones.msgAlert( 'ATENCION' , 'Ocurrió un error al rescatar zonas -> ' + err ); }
           );
     }
     // cargos
     if ( this.baseLocal.cargos.length === 0 ) {
       this.netWork.obtenTablas( 'cargos' )
-          .subscribe( data => { this.baseLocal.guardaCargos( data ); },
+          .subscribe( ( data: any ) => { this.baseLocal.guardaCargos( data.datos ); },
                       err  => { this.funciones.msgAlert( 'ATENCION' , 'Ocurrió un error al rescatar cargos -> ' + err ); }
           );
     }
     // usuarios
     if ( this.baseLocal.usuarios.length === 0 ) {
       this.netWork.obtenTablas( 'usuarios' )
-          .subscribe( data => { this.baseLocal.guardaUsuarios( data ); },
+          .subscribe( ( data: any ) => { this.baseLocal.guardaUsuarios( data.datos ); },
                       err  => { this.funciones.msgAlert( 'ATENCION' , 'Ocurrió un error al rescatar usuarios -> ' + err ); }
           );
     }
@@ -83,15 +83,16 @@ export class LoginPage implements OnInit {
     this.cargando = true;
     if ( fLogin.valid === true ) {
       //
-      this.netWork.isUser( this.rutocorreo, this.clave )
+      this.netWork.login( this.rutocorreo, this.clave )
           .subscribe( (data) => { this.revisaDatos( data ); },
                       ()     => { this.cargando = false;
-                                  this.funciones.msgAlert( 'ATENCION', 'Sin conexion con el servidor. Reintente luego.' ); 
+                                  this.funciones.msgAlert( 'ATENCION', 'Sin conexion con el servidor. Reintente luego.' );
                                 }
                     );
       //
     } else {
       //
+      this.cargando = false;
       this.funciones.msgAlert('ATENCION', 'Ingrese correctamente los datos solicitados.');
     }
   }

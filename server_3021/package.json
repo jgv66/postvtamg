@@ -100,6 +100,7 @@
       "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz",
       "version": "1.0.2"
     },
+    "cors": "^2.8.5",
     "debug": {
       "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
       "requires": {
@@ -236,16 +237,7 @@
       "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
       "version": "0.7.1"
     },
-    "mssql": {
-      "integrity": "sha1-tuYzf/Ej6Hv4ruHmyDRLU8pdqFY=",
-      "requires": {
-        "generic-pool": "2.4.2",
-        "promise": "7.1.1",
-        "tedious": "1.14.0"
-      },
-      "resolved": "https://registry.npmjs.org/mssql/-/mssql-3.3.0.tgz",
-      "version": "3.3.0"
-    },
+    "mssql": "^6.2.0",
     "multer": "^1.3.1",
     "mysql": "^2.15.0",
     "negotiator": {

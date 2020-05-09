@@ -6,6 +6,8 @@ import { BaseLocalService } from '../../services/base-local.service';
 import { FuncionesService } from '../../services/funciones.service';
 import { NetworkEngineService } from '../../services/network-engine.service';
 import { RevisartareaPage } from '../revisartarea/revisartarea.page';
+import { GaleriaPage } from '../galeria/galeria.page';
+import { CreartareaPage } from '../creartarea/creartarea.page';
 
 @Component({
   selector: 'app-tab1',
@@ -37,9 +39,9 @@ export class Tab1Page implements OnInit {
 
   ionViewDidLoad() {
     this.funciones.cuantosTengo( 1, 'enviados' );
-  };
+  }
 
-  cargaTareas( xdesde, infiniteScroll? ) {
+  cargaTareas( xdesde, infiniteScroll?, event? ) {
     //
     if ( xdesde === 0 ) {
       this.cargando         = true;
@@ -54,26 +56,28 @@ export class Tab1Page implements OnInit {
                               empresa:  this.baseLocal.user.empresa,
                               enviados: 'enviados'  } )
         .subscribe( data => {
-                              this.revisarData( data, xdesde, infiniteScroll );
+                              this.revisarData( data, xdesde, infiniteScroll, event );
                             },
                     err  => { this.cargando = false;
                               this.funciones.msgAlert( 'ATENCION', err );
                             }
                   );
   }
-  revisarData( data, xdesde, infiniteScroll ) {
-    console.log('funciones.data', data.datos);
-    console.log('this.baseLocal.user', this.baseLocal.user);
-    // console.log('funciones.data[0]', data.datos[0]);
+  revisarData( data, xdesde, infiniteScroll, event ) {
     const rs    = data.datos,
           largo = data.datos.length;
     this.cargando = false;
     if ( rs === undefined || largo === 0 ) {
-      this.funciones.msgAlert('ATENCION', 'Su lista de Tareas Enviadas está vacía. Reintente.');
+      this.funciones.msgAlert('ATENCION', 'Su lista de Solicitudes pendientes está vacía.');
     } else if ( largo > 0 ) {
       this.pendientes = ( this.offset === 0 ) ? rs : this.pendientes.push(...rs);
+      //
       if ( infiniteScroll ) {
         infiniteScroll.complete();
+      }
+      //
+      if ( event ) {
+        event.target.complete();
       }
       //
       if ( largo < 20  ) {
@@ -89,66 +93,49 @@ export class Tab1Page implements OnInit {
     this.cargaTareas( 0, infiniteScroll );
     this.funciones.cuantosTengo( 1, 0 );
   }
-
-  nuevaTarea() {
-    // this.navCtrl.push( CreatareaPage, { usuario: this.usuario } );
+  doRefresh( event ) {
+    this.cargaTareas( 0, undefined, event );
   }
 
-  cerrarTarea( codigousr, idregistro, tipo ) {
-    if ( this.baseLocal.user.usuario !== codigousr ) {
-      this.funciones.msgAlert('', 'Solicitud no corresponde al usuario');
-    } else {
-      console.log('cerrarTarea( codigousr, idregistro, tipo )');
-      // this.navCtrl.push( RevisartareaPage, { callback: this.cerrarID, id: idregistro, usuario: this.usuario, tipo: tipo } );
-      this.revisarModal( codigousr, idregistro, tipo )
+  async nuevaTarea() {
+    const modal = await this.modalCtrl.create({
+      component: CreartareaPage,
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    //
+    if ( data && data.creado === 'ok' ) {
+      this.cargaTareas( 0 );
+    }
+    //
+  }
 
+  cerrarTarea( tarea, tipin ) {
+    if ( this.baseLocal.user.usuario !== tarea.codigousr ) {
+      this.funciones.msgAlert('', 'Solicitud no corresponde al usuario');
+    } else  if ( tipin === '' && ( tarea.resp_ok !== 1 || tarea.exp_ok !== 1 )) {
+      this.funciones.msgAlert('', 'No puede cerrar esta tarea sin los cierres de Responsable y Experto' );
+    } else {
+      this.revisarModal( tarea.idregistro, tarea.nc_descrip, tipin );
     }
   }
-  async revisarModal( codigousr, idregistro, tipo ) {
+  async revisarModal( idregistro, descripcion, tipin ) {
     const modal = await this.modalCtrl.create({
       component: RevisartareaPage,
-      componentProps: { id: idregistro, tipo }
+      componentProps: { id: idregistro,
+                        tipo: tipin,
+                        descrip: descripcion }
     });
-    return await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-    console.log(data);
-
-  }
-  cerrarID = ( xdata ) => {
-    return new Promise( (resolve, reject) => {
-          console.log( xdata );
-          this.netWork.cerrarReg( { codigousr:    this.baseLocal.user.usuario,
-                                    empresa:      this.baseLocal.user.empresa,
-                                    fechacierre:  xdata.fechacierre,
-                                    observacion:  xdata.obs,
-                                    id:           xdata.id,
-                                    img_base64:   ( (xdata.tipo === '')  ? undefined : xdata.img_base64 ),
-                                    responsable:  ( (xdata.tipo === 'R') ? 'R'       : undefined ),
-                                    experto:      ( (xdata.tipo === 'E') ? 'E'       : undefined )
-                                  } )
-            .subscribe( data => { this.revisaDato( xdata.id, data );  },
-                        err  => { this.funciones.msgAlert( 'ATENCION', err ); }
-                      );
-          resolve( true );
-
-       });
-  };
-
-  revisaDato( id, data ) {
-    console.log('revisaDato()', data);
-    const titulo = 'ATENCION ( ' + id.toString() + ' )';
-    const rs = data[0][0]
-    if ( rs.length === 0 ) {
-      this.funciones.msgAlert(titulo, 'El registro no pudo ser actualizado. Intente luego.');
-    } else if ( rs.resultado === 'ok' ) {
-      this.funciones.msgAlert(titulo, 'El registro fue actualizado exitosamente. Refresque su lista y revise.');
-      this.funciones.cuantosTengo( 1, 'enviados' );
-    } else if ( rs.resultado === 'falta' ) {
-      this.funciones.msgAlert(titulo, 'El regsitro NO fue actualizado. Faltan datos del Experto y Responsable para cerrar.');
-    } else {
-      this.funciones.msgAlert(titulo, 'Ocurrió un error al intentar actualizar el registro' );
+    await modal.present();
+    //
+    const { data } = await modal.onDidDismiss();
+    if ( data && data.cerrado === 'ok' ) {
+        const i = this.pendientes.findIndex( elem => elem.idregistro === idregistro );
+        if ( i !== -1 ) {
+          this.pendientes.splice( i, 1 );
+        }
     }
+    //
   }
 
   refrescaTareas() {
@@ -156,12 +143,15 @@ export class Tab1Page implements OnInit {
     this.cargaTareas( 0 );
   }
 
-  imagenes( tarea ) {
-    if ( tarea.imagenes_i + tarea.imagenes_r + tarea.imagenes_e > 0 ) {
-      console.log('imagenes');
-      // this.navCtrl.push( ImagenProductoPage, { id: tarea.id_registro } );
-    } else {
+  async imagenes( tarea ) {
+    if ( tarea.imagenes_i + tarea.imagenes_r + tarea.imagenes_e === 0 ) {
       this.funciones.msgAlert('', 'El registro no presenta imágenes para visualizar.');
+    } else {
+      const modal = await this.modalCtrl.create({
+        component: GaleriaPage,
+        componentProps: { id: tarea.idregistro, descrip: tarea.nc_descrip }
+      });
+      await modal.present();
     }
   }
 

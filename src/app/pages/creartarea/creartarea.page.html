@@ -1,0 +1,239 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="salir()">
+                <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">Nueva solicitud</ion-title>
+    </ion-toolbar>
+    <ion-progress-bar *ngIf=" cargando " type="indeterminate"></ion-progress-bar>
+</ion-header>
+
+<ion-content padding class="animated fadeIn">
+
+    <ion-item-group>
+        <ion-item-divider mode="ios">
+            <ion-label>Emisión</ion-label>
+        </ion-item-divider>
+        <ion-item lines="none">
+            <ion-label floating style="max-width: 80px;">Sector</ion-label>
+            <ion-select [(ngModel)]="registro.sector" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 280px; max-width: 280px;">
+                <ion-select-option *ngFor="let sector of baseLocal.sectores" value="{{ sector.sector }}">{{ sector.descripcion }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label floating style="max-width: 80px;">Zona</ion-label>
+            <ion-select [(ngModel)]="registro.zona" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 280px; max-width: 280px;">
+                <ion-select-option *ngFor="let zona of baseLocal.zonas" value="{{ zona.zona }}">{{ zona.descripcion }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="5 ">
+                        <ion-button expand="block" fill="clear" size="small" (click)="openCamera()">
+                            <ion-icon slot="start" name="camera"></ion-icon>
+                            Tomar una foto
+                        </ion-button>
+                    </ion-col>
+                    <ion-col size="7 ">
+                        <ion-button expand="block" fill="clear" size="small" (click)="openGallery()">
+                            <ion-icon slot="start" name="images"></ion-icon>
+                            Galería de fotos
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+        <ion-item *ngIf=" this.registro.imagenes.length>0 ">
+            <ion-grid fixed>
+                <ion-row>
+                    <ion-col size="12" size-xl="3" size-lg="4" size-md="6" size-sm="6" size-xs="6" *ngFor="let foto of registro.imagenes">
+                        <ion-card style="max-height: 150px;max-width: 150px;">
+                            <ion-card-content style="margin-bottom: 20px;">
+                                <img [src]=" 'data:image/jpeg;base64,' + foto.img " />
+                            </ion-card-content>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+
+        <!-- <ion-item-divider mode="ios" (click)=" onoff[0] = !onoff[0] "> -->
+        <ion-item-divider mode="ios">
+            <ion-label>No conformidad declarada</ion-label>
+            <!-- <ion-icon slot="end" [name]="( onoff[0] === true ? 'chevron-down-outline' : 'chevron-forward-outline' )"></ion-icon> -->
+        </ion-item-divider>
+        <ion-item lines="none" *ngIf=" onoff[0] === true " class="animated fadeIn fadeOut">
+            <ion-label floating>Descripción</ion-label>
+            <ion-textarea [(ngModel)]="registro.descripcion" rows="4"></ion-textarea>
+        </ion-item>
+        <ion-item lines="none" *ngIf=" onoff[0] === true " class="animated fadeIn fadeOut">
+            <ion-label floating>Clasificación</ion-label>
+            <ion-select [(ngModel)]="registro.clasificacion" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 130px; max-width: 130px;">
+                <ion-select-option *ngFor="let clasificacion of clasificaciones" value="{{ clasificacion.codigo }}">{{ clasificacion.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item-divider mode="ios">
+            <ion-label>Acciones correctivas solicitadas</ion-label>
+        </ion-item-divider>
+        <ion-item lines="none">
+            <ion-label floating>Solicitud</ion-label>
+            <ion-textarea [(ngModel)]="registro.solicitud" rows="4"></ion-textarea>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label floating>Presupuesto</ion-label>
+            <ion-textarea type="number" [(ngModel)]="registro.presupuesto"></ion-textarea>
+        </ion-item>
+
+        <ion-item-divider mode="ios">
+            <ion-label>Responsable asignado</ion-label>
+        </ion-item-divider>
+        <ion-item lines="none">
+            <ion-label floating>Responsable</ion-label>
+            <ion-select [(ngModel)]="registro.resp_usuario" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 220px; max-width: 220px;">
+                <ion-select-option *ngFor="let responsable of baseLocal.usuarios" value="{{ responsable.codigousr }}">{{ responsable.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label>Fecha comprometida</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" min="2018" [(ngModel)]="registro.resp_fcompromiso"></ion-datetime>
+        </ion-item>
+
+        <ion-item-divider mode="ios">
+            <ion-label>Experto asignado</ion-label>
+        </ion-item-divider>
+        <ion-item lines="none">
+            <ion-label floating>Prevencionista</ion-label>
+            <ion-select [(ngModel)]="registro.prev_usuario" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 220px; max-width: 220px;">
+                <ion-select-option *ngFor="let experto of baseLocal.usuarios" value="{{ experto.codigousr }}">{{ experto.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label>Fecha de cumplimiento</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" min="2018" [(ngModel)]="registro.prev_fcumplimien"></ion-datetime>
+        </ion-item>
+
+        <ion-item-divider mode="ios">
+            <ion-label></ion-label>
+        </ion-item-divider>
+        <ion-progress-bar *ngIf=" grabando " type="indeterminate"></ion-progress-bar>
+        <ion-item lines="none">
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="4">
+                        <ion-button expand="block" size="small" (click)="salir()">Abandonar</ion-button>
+                    </ion-col>
+                    <ion-col size="8">
+                        <ion-button expand="block" size="small" (click)="preguntaCrearReg()">Crear solicitud</ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-item-group>
+
+    <!-- <ion-card>
+        <ion-card-header style="padding-top: 5px; padding-bottom: 5px;">
+            <h1>Emisión</h1>
+        </ion-card-header>
+        <ion-item>
+            <ion-label floating style="max-width: 80px;">Sector</ion-label>
+            <ion-select [(ngModel)]="registro.sector" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 280px; max-width: 280px;">
+                <ion-select-option *ngFor="let sector of baseLocal.sectores" value="{{ sector.sector }}">{{ sector.descripcion }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Zona</ion-label>
+            <ion-select [(ngModel)]="registro.zona" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 280px; max-width: 280px;">
+                <ion-select-option *ngFor="let zona of baseLocal.zonas" value="{{ zona.zona }}">{{ zona.descripcion }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-grid>
+            <ion-row>
+                <ion-col size="5 ">
+                    <ion-button expand="block" fill="clear" size="small" (click)="openCamera()">
+                        <ion-icon slot="start" name="camera"></ion-icon>
+                        Tomar una foto
+                    </ion-button>
+                </ion-col>
+                <ion-col size="7 ">
+                    <ion-button expand="block" fill="clear" size="small" (click)="openGallery()">
+                        <ion-icon slot="start" name="images"></ion-icon>
+                        Galería de fotos
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-card>
+    <ion-card>
+        <ion-card-header style="padding-top: 5px; padding-bottom: 5px;">
+            <h1>No conformidad</h1>
+        </ion-card-header>
+        <ion-item>
+            <ion-label floating>Descripción</ion-label>
+            <ion-textarea [(ngModel)]="registro.descripcion" rows="4"></ion-textarea>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Clasificación</ion-label>
+            <ion-select [(ngModel)]="registro.clasificacion" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 130px; max-width: 130px;">
+                <ion-select-option *ngFor="let clasificacion of clasificaciones" value="{{ clasificacion.codigo }}">{{ clasificacion.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+    </ion-card>
+    <ion-card>
+        <ion-card-header style="padding-top: 5px; padding-bottom: 5px;">
+            <h1>Acciones correctivas</h1>
+        </ion-card-header>
+        <ion-item>
+            <ion-label floating>Solicitud</ion-label>
+            <ion-textarea [(ngModel)]="registro.solicitud" rows="4"></ion-textarea>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Presupuesto</ion-label>
+            <ion-textarea type="number" [(ngModel)]="registro.presupuesto"></ion-textarea>
+        </ion-item>
+    </ion-card>
+    <ion-card>
+        <ion-card-header style="padding-top: 5px; padding-bottom: 5px;">
+            <h1>Responsable</h1>
+        </ion-card-header>
+        <ion-item>
+            <ion-label floating>Responsable</ion-label>
+            <ion-select [(ngModel)]="registro.resp_usuario" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 150px; max-width: 150px;">
+                <ion-select-option *ngFor="let responsable of baseLocal.usuarios" value="{{ responsable.codigousr }}">{{ responsable.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-label>Fecha comprometida</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" min="2018" [(ngModel)]="registro.resp_fcompromiso"></ion-datetime>
+        </ion-item>
+    </ion-card>
+    <ion-card>
+        <ion-card-header style="padding-top: 5px; padding-bottom: 5px;">
+            <h1>Experto en Prevención</h1>
+        </ion-card-header>
+        <ion-item>
+            <ion-label floating>Prevencionista</ion-label>
+            <ion-select [(ngModel)]="registro.prev_usuario" okText="Ok" cancelText="Cancelar" interface="alert" style="width: 150px; max-width: 150px;">
+                <ion-select-option *ngFor="let experto of baseLocal.usuarios" value="{{ experto.codigousr }}">{{ experto.nombre }}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-label>Fecha de cumplimiento</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" min="2018" [(ngModel)]="registro.prev_fcumplimien"></ion-datetime>
+        </ion-item>
+    </ion-card>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="4">
+                <ion-button expand="block" size="small" color="amarillo" (click)="salir()">Abandonar</ion-button>
+            </ion-col>
+            <ion-col size="8">
+                <ion-button expand="block" size="small" color="warning" (click)="preguntaCrearReg()">Crear solicitud</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid> -->
+
+</ion-content>

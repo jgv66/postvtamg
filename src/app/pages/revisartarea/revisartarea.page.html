@@ -5,61 +5,73 @@
                 <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title class="ion-text-center">Cerrando {{ titulo }} ( {{ id }} )</ion-title>
+        <ion-title class="ion-text-center">Cerrando ( {{ id }} )</ion-title>
     </ion-toolbar>
     <ion-progress-bar *ngIf=" cargando " type="indeterminate"></ion-progress-bar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding class="animated fadeIn">
 
     <ion-item lines="none">
-        <ion-label style="font-size:85%;" class="ion-text-wrap">
+        <ion-label style="font-size:85%; margin-top: 20px;" class="ion-text-wrap">
             <p>El cierre de este registro solo puede ser realizado por el usuario que lo generó y posterior a que el Responsable y Experto hayan cerrado ambos sus labores.</p>
         </ion-label>
     </ion-item>
 
-    <ion-card class="tarjetaProducto">
+    <ion-card style="margin-top: 10px;">
 
-        <ion-card-header>
-            <h1>Cierre</h1>
-        </ion-card-header>
-        <ion-item>
-            <ion-label>Cerrar registro?</ion-label>
-            <ion-toggle color='danger' checked="false" [(ngModel)]="regcerrado" name="regcerrado"></ion-toggle>
-        </ion-item>
-        <ion-item>
-            <ion-label>Fecha cierre</ion-label>
-            <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" min="2018" max="2022-12-31" [(ngModel)]="regfechacierre" name="regfechacierre"></ion-datetime>
-        </ion-item>
-        <ion-item>
-            <ion-label floating>Observaciones</ion-label>
-            <ion-textarea [(ngModel)]="regobs" name="regobs" rows="3"></ion-textarea>
-        </ion-item>
+        <ion-card-subtitle style="padding:25px;font-weight: bolder;font-style: italic;">"... {{ descrip }} ..."</ion-card-subtitle>
+        <ion-card-title style="padding-left:25px; ">{{ titulo }}</ion-card-title>
 
-        <ion-button *ngIf=" tipo=='R' || tipo == 'E' " icon-only icon-start clear (click)="openCamera()">
-            <ion-icon name="camera"></ion-icon>
-        </ion-button>
-        <ion-button *ngIf=" tipo=='R' || tipo == 'E' " icon-only icon-start clear (click)="openGallery()">
-            <ion-icon name="images"></ion-icon>
-        </ion-button>
-
-        <ion-grid *ngIf=" ( regimagenr != undefined ) && ( tipo=='R' || tipo == 'E' ) ">
-            <ion-row>
-                <ion-col>
-                    <img [src]="regimagenr01" class="imagen-producto" />
-                </ion-col>
-            </ion-row>
-        </ion-grid>
+        <ion-card-content>
+            <ion-item>
+                <ion-label>Cerrar registro?</ion-label>
+                <ion-toggle color='danger' checked="false " [(ngModel)]="cerrado " name="cerrado "></ion-toggle>
+            </ion-item>
+            <ion-item>
+                <ion-label>Fecha cierre</ion-label>
+                <ion-datetime displayFormat="DD/MM/YYYY " pickerFormat="DD MMMM YYYY " min="2018-12-31" max="2022-12-31" [(ngModel)]="fechacierre " name="fechacierre "></ion-datetime>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Observaciones</ion-label>
+                <ion-textarea [(ngModel)]="obs " name="obs " rows="4 "></ion-textarea>
+            </ion-item>
+        </ion-card-content>
 
     </ion-card>
 
-    <ion-grid>
+    <ion-grid *ngIf=" tipo==='R' || tipo==='E' ">
         <ion-row>
-            <ion-col col-5>
-                <ion-button class="botoncito" block small icon-end style="text-transform: none;" color="amarillo" (click)="salir()">Salir sin cerrar</ion-button>
+            <ion-col size="5 ">
+                <ion-button expand="block " fill="clear " size="small " (click)="openCamera() ">
+                    <ion-icon slot="start " name="camera "></ion-icon>
+                    Tomar una foto
+                </ion-button>
             </ion-col>
-            <ion-col col-7>
-                <ion-button class="botoncito" block small icon-end style="text-transform: none;" color="amarillo" (click)="preguntaCerrarReg()">Cerrar registro RNCS</ion-button>
+            <ion-col size="7 ">
+                <ion-button expand="block " fill="clear " size="small " (click)="openGallery() ">
+                    <ion-icon slot="start " name="images "></ion-icon>
+                    Galería de fotos
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <ion-slides *ngIf=" ( imagenes !== undefined ) && ( tipo=='R' || tipo=='E' ) " pager="true" scroll-y="false" class="slide-full">
+        <ion-slide *ngFor="let foto of imagenes ">
+            <ion-card mde="ios " class="image-card ">
+                <img [src]="foto.display " class="slide-image " />
+            </ion-card>
+        </ion-slide>
+    </ion-slides>
+
+    <ion-grid>
+        <ion-row style="margin-left: 10px;margin-right: 5px;">
+            <ion-col size="7">
+                <ion-button expand="block " size="small " style="text-transform: none; " (click)="salir() ">Salir sin cerrar</ion-button>
+            </ion-col>
+            <ion-col size="5">
+                <ion-button expand="block " size="small " style="text-transform: none; " (click)="preguntaCerrarReg() ">Cerrar registro</ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>

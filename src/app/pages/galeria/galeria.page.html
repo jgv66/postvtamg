@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="salir()">
+                <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">Imágenes ( {{ id }} )</ion-title>
+    </ion-toolbar>
+    <ion-progress-bar *ngIf=" cargando " type="indeterminate"></ion-progress-bar>
+</ion-header>
+
+<ion-content>
+    <ion-header style="margin-top: 20px;margin-bottom: 10px;margin-left: 25px;margin-right: 25px;">
+        <ion-label style="font-weight: bolder;font-style: italic;">"... {{ descrip }} ..."</ion-label>
+    </ion-header>
+    <ion-list *ngIf=" ( imagenes !== undefined ) " lines="none">
+        <ion-item *ngFor="let foto of imagenes">
+            <ion-card>
+                <img [src]=" 'data:image/jpeg;base64,' + foto.imgb64 " />
+            </ion-card>
+        </ion-item>
+    </ion-list>
+</ion-content>

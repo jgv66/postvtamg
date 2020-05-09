@@ -20,6 +20,12 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      if ( this.platform.is ('android')) {
+        // console.log('hacer cosas de Android');
+      }
+      if (this.platform.is ('ios')) {
+        // console.log('hacer cosas de Apple');
+      }
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });

@@ -9,17 +9,23 @@ import { Tab1PageRoutingModule } from './tab1-routing.module';
 // import { FechaPipe } from '../../pipes/fecha.pipe';
 import { RevisartareaPage } from '../revisartarea/revisartarea.page';
 import { RevisartareaPageModule } from '../revisartarea/revisartarea.module';
+import { GaleriaPage } from '../galeria/galeria.page';
+import { GaleriaPageModule } from '../galeria/galeria.module';
+import { CreartareaPage } from '../creartarea/creartarea.page';
+import { CreartareaPageModule } from '../creartarea/creartarea.module';
 
 @NgModule({
-  entryComponents: [ RevisartareaPage ],
+  entryComponents: [ RevisartareaPage, GaleriaPage, CreartareaPage ],
   imports: [
     IonicModule,
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,
     Tab1PageRoutingModule,
-    RevisartareaPageModule
+    RevisartareaPageModule,
+    GaleriaPageModule,
+    CreartareaPageModule,
   ],
-  declarations: [Tab1Page /*, FechaPipe*/ ]
+  declarations: [Tab1Page ]
 })
 export class Tab1PageModule {}

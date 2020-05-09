@@ -14,8 +14,8 @@ export class NetworkEngineService {
     console.log('<<< NetworkengineProvider >>>');
   }
 
-  isUser( rutcorreo: string, clave: string ) {
-    const accion = '/postusr';
+  login( rutcorreo: string, clave: string ) {
+    const accion = '/login';
     const body   = { rutcorreo, clave };
     return this.http.post( url + accion, body );
   }
@@ -44,6 +44,12 @@ export class NetworkEngineService {
     return this.http.post( url + accion, body );
   }
 
+  getImages( id ) {
+    const accion = '/getimages';
+    const body   = { id };
+    return this.http.post( url + accion, body );
+  }
+
   traeUnaLista( cTabla: string, cOrderBy?: string, nTop?: number, cWhere?: string, cSelect?: string ) {
     const accion = '/tabla';
     const body   = { tabla: cTabla, orderby: cOrderBy, top: nTop, where: cWhere, select: cSelect };
@@ -62,10 +68,10 @@ export class NetworkEngineService {
     return this.http.post( url + accion, body );
   }
 
-  crearNuevoReg( datos ) {
-    console.log('a grabar: ', datos);
+  crearNuevoReg( datos, imagenes ) {
+    // console.log('a grabar: ', { data: datos, imagenes } );
     const accion = '/nuevatarea';
-    const body   = { data: datos };
+    const body   = { data: datos, imagenes };
     return this.http.post( url + accion, body );
   }
 
@@ -76,7 +82,7 @@ export class NetworkEngineService {
   }
 
   enviarMensajeAlServidor( nEmpresa: number, pUsuario: string, pCarrito: string ) {
-    console.log(nEmpresa, pUsuario, pCarrito);
+    // console.log(nEmpresa, pUsuario, pCarrito);
     const accion = '/mensaje';
     const body   = { empresa: nEmpresa, usuario: pUsuario, transaccion: pCarrito };
     return this.http.post( url + accion, body );
