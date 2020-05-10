@@ -38,9 +38,9 @@ export class NetworkEngineService {
     return this.http.post( url + accion, body );
   }
 
-  cerrarReg( data ) {
+  cerrarReg( data, tiporeg, imagenes ) {
     const accion = '/cerrarid';
-    const body   = data;
+    const body   = { data, imagenes, tiporeg };
     return this.http.post( url + accion, body );
   }
 
@@ -68,10 +68,10 @@ export class NetworkEngineService {
     return this.http.post( url + accion, body );
   }
 
-  crearNuevoReg( datos, imagenes ) {
+  crearNuevoReg( datos, tiporeg, imagenes ) {
     // console.log('a grabar: ', { data: datos, imagenes } );
     const accion = '/nuevatarea';
-    const body   = { data: datos, imagenes };
+    const body   = { data: datos, imagenes, tiporeg };
     return this.http.post( url + accion, body );
   }
 

@@ -4,7 +4,6 @@ import { NetworkEngineService } from '../../services/network-engine.service';
 import { BaseLocalService } from '../../services/base-local.service';
 import { Router } from '@angular/router';
 import { FuncionesService } from '../../services/funciones.service';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-revisartarea',
@@ -18,19 +17,19 @@ export class RevisartareaPage implements OnInit {
   @Input() descrip;
 
   cargando = false;
+  grabando = false;
   cerrado = false;
   fechacierre = new Date().toISOString();
   obs = '';
   titulo = '';
-  imagenes: Array<any>;
+  registro = { imagenes: [] };
 
   constructor( private modalCtrl: ModalController,
                private router: Router,
                private alertCtrl: AlertController,
-               private camera: Camera,
                private netWork: NetworkEngineService,
                private baseLocal: BaseLocalService,
-               private funciones: FuncionesService) {
+               public funciones: FuncionesService) {
   }
 
   ngOnInit() {
@@ -64,7 +63,6 @@ export class RevisartareaPage implements OnInit {
                   err  => { this.cargando = false; this.funciones.msgAlert( 'ATENCION', err );  }
                 );
   }
-
   revisaDatos( data ) {
     this.cargando = false;
     const rs = data.datos;
@@ -83,7 +81,7 @@ export class RevisartareaPage implements OnInit {
   }
 
   async preguntaCerrarReg() {
-    //
+    // console.log(this.funciones.toType( this.fechacierre ), this.fechacierre.slice( 0, 10 ) );
     if ( this.cerrado === false || this.obs === '' ) {
       this.funciones.msgAlert('', 'Debe completar los datos antes de cerrar esta solicitud.' );
     } else {
@@ -100,79 +98,38 @@ export class RevisartareaPage implements OnInit {
       //
       }
   }
-
   retornaExito() {
-    this.cargando = true;
-    this.netWork.cerrarReg( { codigousr:    this.baseLocal.user.usuario,
+    this.grabando = true;
+    this.netWork.cerrarReg( { codigousr:    this.baseLocal.user.usuario.trim(),
                               empresa:      this.baseLocal.user.empresa,
-                              fechacierre:  this.fechacierre,
-                              observacion:  this.obs,
+                              fechacierre:  this.fechacierre.slice( 0, 10 ),
+                              observacion:  this.obs.trim(),
                               id:           this.id,
-                              imgb64:       ( (this.tipo === '')  ? undefined : this.imagenes ),
                               responsable:  ( (this.tipo === 'R') ? 'R'       : undefined ),
-                              experto:      ( (this.tipo === 'E') ? 'E'       : undefined )
-                            } )
+                              experto:      ( (this.tipo === 'E') ? 'E'       : undefined ) },
+                              this.tipo,
+                              this.registro.imagenes.length === 0 ? undefined : JSON.stringify(this.registro.imagenes) )
       .subscribe( data => { this.revisaDato( data );  },
-                  err  => { this.cargando = false;
+                  err  => { this.grabando = false;
                             this.funciones.msgAlert( '', err ); }
                 );
   }
-
   revisaDato( data ) {
-    // console.log('revisaDato()', data);
-    this.cargando = false;
+    // console.log('revisaDato()', data.datos );
+    this.grabando = false;
     if ( data.datos.length === 0 ) {
       this.funciones.msgAlert('', 'El registro ( ' + this.id.toString() + ' ) no pudo ser actualizado. Intente luego.');
     } else if ( data.datos[0].resultado === 'ok' ) {
       //
       this.funciones.msgAlert('', 'El registro ( ' + this.id.toString() + ' ) fue actualizado exitosamente. Su lista ya fue actualizada.');
       this.funciones.cuantosTengo( 1, 'enviados' );
-      this.modalCtrl.dismiss( { cerrado: 'ok' } );
+      this.modalCtrl.dismiss( { cerrado: 'ok', imgs: this.registro.imagenes.length } );
       //
     } else if ( data.resultado === 'falta' ) {
       this.funciones.msgAlert('', 'El regsitro ( ' + this.id.toString() + ' ) NO fue actualizado. Faltan datos del Experto y Responsable para cerrar.');
     } else {
       this.funciones.msgAlert('', 'Ocurrió un error al intentar actualizar el registro ( ' + this.id.toString() + ' ) ' );
     }
-  }
-
-  openCamera() {
-    // datos de la imagen y camarea
-    const options: CameraOptions = {
-      quality:            75,
-      destinationType:    this.camera.DestinationType.DATA_URL,
-      encodingType:       this.camera.EncodingType.JPEG,
-      mediaType:          this.camera.MediaType.PICTURE,
-      correctOrientation: true,
-    };
-    // abrir la camara
-    this.camera.getPicture( options )
-      .then(  (imageData) => {
-                  this.imagenes.push( { img: imageData, display: 'data:image/jpeg;base64,' + imageData } ); // img: a grabar, diplay: a gesplegar
-              },  //
-              (error)     => {
-                  // ver el error....
-              } );
-  }
-
-  openGallery() {
-    // datos de la imagen y camarea
-    const options: CameraOptions = {
-      quality:            75,
-      destinationType:    this.camera.DestinationType.DATA_URL,
-      encodingType:       this.camera.EncodingType.JPEG,
-      mediaType:          this.camera.MediaType.PICTURE,
-      sourceType:         this.camera.PictureSourceType.PHOTOLIBRARY,
-      correctOrientation: true,
-    }
-    // abrir la galeria
-    this.camera.getPicture( options )
-      .then(  (imageData) => {
-                  this.imagenes.push( { img: imageData, display: 'data:image/jpeg;base64,' + imageData } ); // img: a grabar, diplay: a gesplegar
-              },  //
-              (error)     => {
-                  // ver el error....
-              } );
   }
 
 }

@@ -79,7 +79,7 @@ module.exports = {
             if (enviados == 'enviados') {
                 query = "exec ksp_mispendientes " + offset + ",'" + usuario + "'," + empresa + " ;";
             } else {
-                query = "exec sp_misrecibidos  " + offset + ",'" + usuario + "'," + empresa + " ;";
+                query = "exec ksp_misrecibidos  " + offset + ",'" + usuario + "'," + empresa + " ;";
             }
         }
         console.log(query);
@@ -133,40 +133,6 @@ module.exports = {
                 return { resultado: 'error', datos: err };
             });
     },
-    //
-    saveIMG: function(sql, imagenes, id) {
-        //  
-        var query = 'insert into registros_img (idregistro,tipo,imagen_ext,imagen_b64) values ';
-        //
-        const l = imagenes.length - 1;
-        var i = 0;
-        imagenes.forEach(imagen => {
-            console.log(imagen.img.length);
-            query += "( " + id.toString() + ",'I','JPG','" + imagen.img + "')" + (i < l ? ',' : '');
-            ++i;
-        });
-        // console.log(query);
-        //
-        const request = new sql.Request();
-        return request.query(query)
-            .then(resultado => {
-                // console.log(resultado);
-                return resultado.recordset;
-            })
-            .then(resultado => {
-                // console.log(resultado);
-                // if (resultado) {
-                return { resultado: 'ok', datos: resultado };
-                // } else {
-                //     return { resultado: 'error', datos: resultado };
-                // }
-            })
-            .catch(err => {
-                console.log(err);
-                return { resultado: 'error', datos: err };
-            });
-    },
-    //
     consultaID: function(sql, body) {
         //
         console.log(body);
@@ -198,15 +164,15 @@ module.exports = {
     //    
     cerrarID: function(sql, body) {
         //
-        console.log(body);
+        console.log('cerrarID', body);
         const query = "exec ksp_cierraid '" +
             body.codigousr + "'," +
             body.empresa + "," +
             body.id.toString() + ",'" +
             body.fechacierre + "','" +
-            body.observacion + "','" +
-            body.responsable + "','" +
-            body.experto + "' ;";
+            body.observacion + "'," +
+            (body.responsable === undefined ? "''" : "'" + body.responsable + "'") + "," +
+            (body.experto === undefined ? "''" : "'" + body.experto + "'") + " ;";
         console.log(query);
         //
         const request = new sql.Request();
@@ -244,6 +210,39 @@ module.exports = {
                 } else {
                     return { resultado: 'error', datos: resultado };
                 }
+            })
+            .catch(err => {
+                console.log(err);
+                return { resultado: 'error', datos: err };
+            });
+    },
+    //
+    saveIMG: function(sql, imagenes, tiporeg, id) {
+        //  
+        var query = 'insert into registros_img ( idregistro, tipo, imagen_ext, imagen_b64 ) values ';
+        //
+        const l = imagenes.length - 1;
+        var i = 0;
+        imagenes.forEach(imagen => {
+            console.log(imagen.img.length);
+            query += "( " + id.toString() + ",'" + tiporeg + "','JPG','" + imagen.img + "')" + (i < l ? ',' : '');
+            ++i;
+        });
+        // console.log(query);
+        //
+        const request = new sql.Request();
+        return request.query(query)
+            .then(resultado => {
+                // console.log(resultado);
+                return resultado.recordset;
+            })
+            .then(resultado => {
+                // console.log(resultado);
+                // if (resultado) {
+                return { resultado: 'ok', datos: resultado };
+                // } else {
+                //     return { resultado: 'error', datos: resultado };
+                // }
             })
             .catch(err => {
                 console.log(err);

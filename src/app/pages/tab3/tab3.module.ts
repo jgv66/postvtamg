@@ -6,9 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { Tab3Page } from './tab3.page';
 import { ExploreContainerComponentModule } from '../../explore-container/explore-container.module';
 
-import { Tab3PageRoutingModule } from './tab3-routing.module'
+import { Tab3PageRoutingModule } from './tab3-routing.module';
+import { GaleriaPage } from '../galeria/galeria.page';
+import { GaleriaPageModule } from '../galeria/galeria.module';
 
 @NgModule({
+  entryComponents: [ GaleriaPage ],
   imports: [
     IonicModule,
     CommonModule,
@@ -16,6 +19,7 @@ import { Tab3PageRoutingModule } from './tab3-routing.module'
     ExploreContainerComponentModule,
     RouterModule.forChild([{ path: '', component: Tab3Page }]),
     Tab3PageRoutingModule,
+    GaleriaPageModule,
   ],
   declarations: [Tab3Page]
 })

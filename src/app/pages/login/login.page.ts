@@ -102,7 +102,7 @@ export class LoginPage implements OnInit {
     if ( data.datos.length === 0 || data.resultado === 'error' ) {
         this.funciones.msgAlert('ATENCION', data.datos );
     } else {
-        this.funciones.muestraySale( 'Hola ' + user.nombre + ', ' + this.funciones.textoSaludo() , 1 );
+        this.funciones.muestraySale( 'Hola ' + user.nombre + ', ' + this.funciones.textoSaludo() , 0.7 );
         this.baseLocal.guardaUltimoUsuario( user );
         // cambio el root y ademas pongo una pequeña animacion
         this.navCtrl.navigateRoot('/main/tabs/tab1', { animated: true });

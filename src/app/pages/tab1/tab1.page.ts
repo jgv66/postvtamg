@@ -113,8 +113,10 @@ export class Tab1Page implements OnInit {
   cerrarTarea( tarea, tipin ) {
     if ( this.baseLocal.user.usuario !== tarea.codigousr ) {
       this.funciones.msgAlert('', 'Solicitud no corresponde al usuario');
-    } else  if ( tipin === '' && ( tarea.resp_ok !== 1 || tarea.exp_ok !== 1 )) {
+    } else  if ( tipin === '' && ( tarea.resp_ok !== true || tarea.exp_ok !== true )) {
       this.funciones.msgAlert('', 'No puede cerrar esta tarea sin los cierres de Responsable y Experto' );
+    } else  if ( ( tipin === 'R' && tarea.resp_ok === true ) || ( tipin === 'E' && tarea.exp_ok === true ) ) {
+      this.funciones.msgAlert('', 'Este requerimineto ya está cerrado.' );
     } else {
       this.revisarModal( tarea.idregistro, tarea.nc_descrip, tipin );
     }
@@ -130,10 +132,20 @@ export class Tab1Page implements OnInit {
     //
     const { data } = await modal.onDidDismiss();
     if ( data && data.cerrado === 'ok' ) {
-        const i = this.pendientes.findIndex( elem => elem.idregistro === idregistro );
-        if ( i !== -1 ) {
+      const i = this.pendientes.findIndex( elem => elem.idregistro === idregistro );
+      if ( i !== -1 ) {
+        if ( tipin === 'I' ) {
           this.pendientes.splice( i, 1 );
+        } else if ( tipin === 'R' ) {
+          this.pendientes[i].resp_ok = true;
+          this.pendientes[i].imagenes_r = data.imgs ;
+          this.pendientes[i].resp_fcierre = new Date();
+        } else if ( tipin === 'E' ) {
+          this.pendientes[i].exp_ok = true;
+          this.pendientes[i].imagenes_e = data.imgs ;
+          this.pendientes[i].resp_fcierre = new Date();
         }
+      }
     }
     //
   }

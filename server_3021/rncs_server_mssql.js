@@ -123,7 +123,7 @@ app.post('/nuevatarea', function(req, res) {
                     res.json({ resultado: 'ok', datos: data.datos });
                 } else {
                     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> grabacion de imagenes en b64
-                    consultas.saveIMG(sql, imagenes, data.datos[0].id)
+                    consultas.saveIMG(sql, imagenes, req.body.tiporeg, data.datos[0].id)
                         .then(function(idata) {
                             //
                             console.log(idata);
@@ -171,22 +171,26 @@ app.post('/consultaid', function(req, res) {
 
 app.post('/cerrarid', function(req, res) {
     //
-    consultas.cerrarID(sql, req.body)
+    // console.log(req.body);
+    const imagenes = (req.body.imagenes === undefined) ? undefined : JSON.parse(req.body.imagenes);
+    // console.log(imagenes);
+    //
+    consultas.cerrarID(sql, req.body.data)
         .then(function(data) {
             //
-            console.log(data);
+            // console.log(data);
             if (data.resultado === 'ok') {
                 //
-                if (req.body.imgb64 === undefined) {
+                if (imagenes === undefined) {
                     res.json({ resultado: 'ok', datos: data.datos });
                 } else {
                     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> grabacion de imagenes en b64
-                    consultas.saveIMG(sql, req.body)
+                    consultas.saveIMG(sql, imagenes, req.body.tiporeg, req.body.data.id)
                         .then(function(idata) {
                             //
                             console.log(idata);
                             if (idata.resultado === 'ok') {
-                                res.json({ resultado: 'ok', datos: idata.datos });
+                                res.json({ resultado: 'ok', datos: data.datos }); // esta correcto IDATA es de las imagenes
                             } else {
                                 res.json({ resultado: 'error', datos: idata.mensaje });
                             }
@@ -213,7 +217,7 @@ app.post('/getimages', function(req, res) {
     consultas.getImages(sql, req.body)
         .then(function(data) {
             //
-            console.log(data);
+            // console.log(data);
             if (data.resultado === 'ok') {
                 //
                 if (data.resultado === 'ok') {

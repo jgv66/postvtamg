@@ -1,3 +1,11 @@
-ion-content ion-toolbar {
-  --background: translucent;
+ion-content {
+    --background: translucent;
+}
+
+ion-toolbar {
+    --background: #3880ff;
+}
+
+h5 {
+    font-size: 70%;
 }

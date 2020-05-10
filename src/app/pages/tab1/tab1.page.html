@@ -16,7 +16,7 @@
         <ion-item *ngFor="let tarea of pendientes" class="animated fadeIn">
             <ion-label>
                 <h2 style="margin-bottom: 5px;">
-                    <ion-badge [color]=" baseLocal.user.usuario === tarea.codigousr ? 'danger' : 'primary' " (click)="cerrarTarea( tarea, '' )">Nro: {{ tarea.idregistro }}</ion-badge>
+                    <ion-badge [color]=" baseLocal.user.usuario === tarea.codigousr ? 'danger' : 'primary' " (click)="cerrarTarea( tarea, 'I' )">Nro: {{ tarea.idregistro }}</ion-badge>
                     <ion-badge color="light" mode="ios">Ingreso: {{ tarea.fechaingreso | date }} ( {{ tarea.dias | number:"1.0-0" }} días )</ion-badge>
                 </h2>
                 <ion-text class="ion-text-wrap" style="font-weight:bolder;font-style: italic;">
@@ -30,14 +30,14 @@
                 </ion-text>
                 <ion-text color="primary">
                     <h2 style="margin-bottom: 7px;">
-                        <ion-badge [color]="(tarea.resp_ok !== 1) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'R' )">
+                        <ion-badge [color]="(tarea.resp_ok !== true ) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'R' )">
                             (R) {{ tarea.resp_nombre }} {{ tarea.resp_fcierre ? '( Cerrada: ' : '(aún no cerrada)' }} {{ tarea.resp_fcierre | date }} {{ tarea.resp_fcierre ? ')' : '' }}
                         </ion-badge>
                     </h2>
                 </ion-text>
                 <ion-text color="primary">
                     <h2>
-                        <ion-badge [color]="(tarea.exp_ok !== 1) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'E' )">
+                        <ion-badge [color]="(tarea.exp_ok !== true) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'E' )">
                             (E) {{ tarea.expe_nombre }} {{ tarea.expe_fcierre ? '( Cerrada: ' : '(aún no cerrada)' }} {{ tarea.expe_fcierre | date }} {{ tarea.expe_fcierre ? ')' : '' }}
                         </ion-badge>
                     </h2>

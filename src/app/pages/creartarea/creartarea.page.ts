@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 import { NetworkEngineService } from '../../services/network-engine.service';
 import { BaseLocalService } from '../../services/base-local.service';
@@ -37,10 +36,9 @@ export class CreartareaPage implements OnInit {
   constructor( private modalCtrl: ModalController,
                private router: Router,
                private alertCtrl: AlertController,
-               private camera: Camera,
                private netWork: NetworkEngineService,
                public baseLocal: BaseLocalService,
-               private funciones: FuncionesService) {
+               public funciones: FuncionesService) {
   }
 
   ngOnInit() {
@@ -91,6 +89,7 @@ export class CreartareaPage implements OnInit {
                                   fcompromiso:    this.registro.resp_fcompromiso,
                                   prevencionista: this.registro.prev_usuario.trim(),
                                   fcumplimiento:  this.registro.prev_fcumplimien },
+                                'I',  // tiporeg
                                 this.registro.imagenes.length === 0 ? undefined : JSON.stringify(this.registro.imagenes) )
       .subscribe( data => { this.revisaCrearTarea( data ); },
                   err  => { this.grabando = false; this.funciones.msgAlert( '', err );  }
@@ -108,7 +107,8 @@ export class CreartareaPage implements OnInit {
     }
   }
 
-  openCamera() {
+/*
+  openCamera1() {
     // datos de la imagen y camarea
     const options: CameraOptions = {
       quality:            50,
@@ -129,7 +129,7 @@ export class CreartareaPage implements OnInit {
               } );
   }
 
-  openGallery() {
+  openGallery1() {
     // datos de la imagen y camarea
     const options: CameraOptions = {
       quality:            50,
@@ -150,5 +150,5 @@ export class CreartareaPage implements OnInit {
                   // ver el error....
               } );
   }
-
+*/
 }

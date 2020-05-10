@@ -72,12 +72,10 @@ export class BaseLocalService {
     this.storage.set( 'rncs_ultimo_usuario',  this.user );
   }
 
-  obtenUltimoUsuario() {
-    return this.storage.get('rncs_ultimo_usuario')
-      .then( usr => {
-          this.user = usr == null ? {} : usr;
-          return this.user;
-      });
+  async obtenUltimoUsuario() {
+    const usr = await this.storage.get('rncs_ultimo_usuario');
+    this.user = usr == null ? {} : usr;
+    return this.user;
   }
 
   cantidadSectores() { return this.sectores.length; }

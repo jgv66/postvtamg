@@ -1,17 +1,69 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title class="ion-text-center">Requerimientos pendientes</ion-title>
+    </ion-toolbar>
+    <ion-progress-bar *ngIf=" cargando " type="indeterminate"></ion-progress-bar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content pullingText="Tire para refrescar" refreshingSpinner="circles" refreshingText="Refrescando...">
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list>
+        <ion-item *ngFor="let tarea of recibidos" class="animated fadeIn">
+            <ion-label>
+                <h2 style="margin-bottom: 5px;">
+                    <ion-badge color="medium">Nro: {{ tarea.idregistro }} Ingreso: {{ tarea.fechaingreso | date }} ( {{ tarea.dias | number:"1.0-0" }} días )</ion-badge>
+                </h2>
+                <ion-text class="ion-text-wrap" style="font-weight:bolder;font-style: italic;">
+                    <h3 style="margin-bottom: 5px;">{{ tarea.nc_descrip }}</h3>
+                </ion-text>
+                <ion-text color="danger" class="ion-text-wrap" style="font-weight: bolder;">
+                    <h3 style="margin-bottom: 5px;">{{ tarea.solicitud }}</h3>
+                </ion-text>
+                <ion-text color="dark">
+                    <h5 style="margin-bottom: 10px;">(S) {{ tarea.sector_descrip }} (Z) {{ tarea.zona_descrip }}</h5>
+                </ion-text>
+                <ion-text color="primary">
+                    <h2 style="margin-bottom: 7px;">
+                        <ion-badge [color]="(tarea.resp_ok !== true ) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'R' )">
+                            (R) {{ tarea.resp_nombre }} {{ tarea.resp_fcierre ? '( Cerrada: ' : '(aún no cerrada)' }} {{ tarea.resp_fcierre | date }} {{ tarea.resp_fcierre ? ')' : '' }}
+                        </ion-badge>
+                    </h2>
+                </ion-text>
+                <ion-text color="primary">
+                    <h2>
+                        <ion-badge [color]="(tarea.exp_ok !== true) ? 'danger' : 'primary' " slot="end" (click)="cerrarTarea( tarea, 'E' )">
+                            (E) {{ tarea.expe_nombre }} {{ tarea.expe_fcierre ? '( Cerrada: ' : '(aún no cerrada)' }} {{ tarea.expe_fcierre | date }} {{ tarea.expe_fcierre ? ')' : '' }}
+                        </ion-badge>
+                    </h2>
+                </ion-text>
+            </ion-label>
+            <ion-avatar slot="end" (click)="imagenes( tarea )" style="top: -30px; margin-top: 0px;width: 36px; margin-left: 5px; margin-right: 5px;">
+                <img [src]=" (tarea.imagenes_i + tarea.imagenes_r + tarea.imagenes_e > 0) ? 'assets/img/confoto.png' : 'assets/img/sinfoto.png' ">
+            </ion-avatar>
+        </ion-item>
+    </ion-list>
+
+    <ion-fab horizontal="end" vertical="top" slot="fixed" edge>
+        <ion-fab-button color="primary" size="small">
+            <ion-icon size="small" name="medkit"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="down">
+            <ion-fab-button size="small" (click)="refrescaTareas()" color="primary">
+                <ion-icon size="small" name="refresh"> </ion-icon>
+            </ion-fab-button>
+            <ion-fab-button size="small" (click)="scrollToTop()" color="primary">
+                <ion-icon size="small" name="arrow-up"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+
+    <ion-infinite-scroll threshold='300px' (ionInfinite)="masDatos( $event )" *ngIf=" lScrollInfinito == true ">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Buscando más datos..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
 </ion-content>
