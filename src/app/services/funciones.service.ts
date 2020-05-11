@@ -60,7 +60,14 @@ export class FuncionesService implements OnInit {
       message: cTexto,
       duration: 1500 * segundos,
       position: posicion || 'middle',
-      color: ( color ) ? color : 'danger'
+      color: ( color ) ? color : 'danger',
+      buttons: [
+         {
+          text: 'Ok',
+          role: 'cancel',
+          handler: () => {}
+        }
+      ]
     });
     toast.present();
   }
