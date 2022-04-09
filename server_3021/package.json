@@ -231,7 +231,7 @@
       "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.11.tgz",
       "version": "2.1.11"
     },
-    "moment": "^2.20.1",
+    "moment": "^2.29.2",
     "ms": {
       "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg=",
       "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
