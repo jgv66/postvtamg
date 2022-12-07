@@ -139,7 +139,7 @@
       "resolved": "https://registry.npmjs.org/etag/-/etag-1.7.0.tgz",
       "version": "1.7.0"
     },
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "finalhandler": {
       "integrity": "sha1-6VCKvs6bbbqHGmlCodeRG5GRGsc=",
       "requires": {
